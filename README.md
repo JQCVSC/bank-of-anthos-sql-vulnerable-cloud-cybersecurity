@@ -1,16 +1,73 @@
-# Bank of Anthos
+# SQL Vulnerable Cloud Cybersecurity Lab
 
-![GitHub branch check runs](https://img.shields.io/github/check-runs/GoogleCloudPlatform/bank-of-anthos/main)
-[![Website](https://img.shields.io/website?url=https%3A%2F%2Fcymbal-bank.fsi.cymbal.dev%2F&label=live%20demo
-)](https://cymbal-bank.fsi.cymbal.dev)
+This project is a modified version of the original [Bank of Anthos](https://github.com/GoogleCloudPlatform/bank-of-anthos) web application, designed to demonstrate SQL vulnerabilities in a cloud environment. The purpose of this project is to serve as a lab environment for ethical hacking and cybersecurity testing in a cloud-native context using Google Cloud Platform (GCP) and Kubernetes.
 
-**Bank of Anthos** is a sample HTTP-based web app that simulates a bank's payment processing network, allowing users to create artificial bank accounts and complete transactions.
+## Steps to Set Up and Test
 
-Google uses this application to demonstrate how developers can modernize enterprise applications using Google Cloud products, including: [Google Kubernetes Engine (GKE)](https://cloud.google.com/kubernetes-engine), [Anthos Service Mesh (ASM)](https://cloud.google.com/anthos/service-mesh), [Anthos Config Management (ACM)](https://cloud.google.com/anthos/config-management), [Migrate to Containers](https://cloud.google.com/migrate/containers), [Spring Cloud GCP](https://spring.io/projects/spring-cloud-gcp), [Cloud Operations](https://cloud.google.com/products/operations), [Cloud SQL](https://cloud.google.com/sql/docs), [Cloud Build](https://cloud.google.com/build), and [Cloud Deploy](https://cloud.google.com/deploy). This application works on any Kubernetes cluster.
+### 1. Install Dependencies
+- Ensure your Parrot OS has the following tools installed:
+  - **Docker**
+  - **kubectl**
+  - **gcloud** (Google Cloud CLI)
+- You’ll need a **Google Cloud account** to set up a Google Kubernetes Engine (GKE) cluster.
 
-If you are using Bank of Anthos, please ★Star this repository to show your interest!
+### 2. Clone the Repository
 
-**Note to Googlers:** Please fill out the form at [go/bank-of-anthos-form](https://goto2.corp.google.com/bank-of-anthos-form).
+```bash
+git clone https://github.com/YOUR_USERNAME/sql-vulnerable-cloud-cybersecurity
+cd sql-vulnerable-cloud-cybersecurity/
+3. Set Up GCP Environment
+Create a GCP Project and get your PROJECT_ID.
+Enable required APIs (like Kubernetes API):
+```
+```bash
+Copy code
+export PROJECT_ID=<YOUR_PROJECT_ID>
+export REGION=us-central1
+gcloud services enable container.googleapis.com --project=${PROJECT_ID}
+4. Create a GKE Cluster
+```bash
+Copy code
+gcloud container clusters create-auto sql-vulnerable-cloud \
+  --project=${PROJECT_ID} --region=${REGION}
+```
+5. Deploy to GKE Cluster
+Deploy the project to your Kubernetes cluster:
+
+```bash
+Copy code
+kubectl apply -f ./extras/jwt/jwt-secret.yaml
+kubectl apply -f ./kubernetes-manifests
+```
+6. Access the Application
+Get the external IP of the frontend service:
+```bash
+Copy code
+kubectl get service frontend | awk '{print $4}'
+Visit the external IP in a web browser to interact with the application.
+```
+Testing and Exploiting Vulnerabilities
+
+Reconnaissance
+Use Nmap or Masscan to scan open ports and services.
+Use Nikto to identify potential web vulnerabilities on the frontend.
+
+Static Analysis
+Analyze the source code from the repository to look for security flaws (e.g., hardcoded credentials, SQL injections).
+Use tools like SearchSploit to find relevant exploits for technologies in use (PostgreSQL, Python, etc.).
+
+Dynamic Testing
+Launch OWASP ZAP or Burp Suite to perform dynamic testing on the web frontend.
+Identify weak points like SQL injection, XSS, or authentication bypass.
+
+Exploiting Vulnerabilities
+For SQL injection vulnerabilities, use tools like SQLmap to attempt exploitation.
+For weaknesses in JWT authentication, try manipulating tokens to bypass authentication.
+
+Ethical Considerations
+Work within your own environment: Since this is a public demo, make sure you're testing on your own GKE deployment.
+Disclaimer
+This project is for educational purposes only. Any misuse of this code in environments outside your control is not condoned by the project contributors.
 
 ## Screenshots
 
@@ -52,7 +109,7 @@ The following button opens up an interactive tutorial showing how to deploy Bank
    ```sh
    git clone https://github.com/GoogleCloudPlatform/bank-of-anthos
    cd bank-of-anthos/
-   ```
+   
 
 3. Set the Google Cloud project and region and ensure the Google Kubernetes Engine API is enabled.
 
