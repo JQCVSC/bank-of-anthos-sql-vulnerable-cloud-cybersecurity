@@ -1,73 +1,156 @@
 # SQL Vulnerable Cloud Cybersecurity Lab
 
-This project is a modified version of the original [Bank of Anthos](https://github.com/GoogleCloudPlatform/bank-of-anthos) web application, designed to demonstrate SQL vulnerabilities in a cloud environment. The purpose of this project is to serve as a lab environment for ethical hacking and cybersecurity testing in a cloud-native context using Google Cloud Platform (GCP) and Kubernetes.
+![GitHub repo size](https://img.shields.io/github/repo-size/JQCVSC/bank-of-anthos-sql-vulnerable-cloud-cybersecurity)
+![GitHub contributors](https://img.shields.io/github/contributors/JQCVS/bank-of-anthos-sql-vulnerable-cloud-cybersecurity)
+![GitHub stars](https://img.shields.io/github/stars/JQCVS/bank-of-anthos-sql-vulnerable-cloud-cybersecurity?style=social)
+![GitHub forks](https://img.shields.io/github/forks/JQCVS/bank-of-anthos-sql-vulnerable-cloud-cybersecurity?style=social)
+![GitHub issues](https://img.shields.io/github/issues/JQCVS/bank-of-anthos-sql-vulnerable-cloud-cybersecurity)
 
-## Steps to Set Up and Test
+## 📖 Overview
+This lab is a modified version of the original Bank of Anthos web application, intentionally configured to include SQL vulnerabilities. It serves as an educational platform for ethical hacking, cloud security testing, and demonstrating SQL vulnerabilities in a cloud-native environment using **Google Cloud Platform (GCP)** and **Kubernetes**.
 
-### 1. Install Dependencies
-- Ensure your Parrot OS has the following tools installed:
-  - **Docker**
-  - **kubectl**
-  - **gcloud** (Google Cloud CLI)
-- You’ll need a **Google Cloud account** to set up a Google Kubernetes Engine (GKE) cluster.
+## 🎯 Objectives
+- Deploy a cloud-native web application with intentional security flaws.
+- Learn how to identify and exploit SQL vulnerabilities.
+- Demonstrate common security testing methodologies for cloud applications.
+- Gain hands-on experience with tools like **Docker**, **Kubernetes**, **OWASP ZAP**, and **SQLMap**.
 
-### 2. Clone the Repository
+## 📝 Lab Requirements
+- **Operating System**: Parrot Security OS (or a similar penetration testing Linux distro)
+- **Tools Installed**: Docker, kubectl, Google Cloud CLI (gcloud), Nmap, OWASP ZAP, SQLMap
+- **Cloud Account**: A Google Cloud account to set up a Google Kubernetes Engine (GKE) cluster.
+
+---
+
+## 🚀 Step 1: Set Up the Environment
+
+### 1.1 Install Dependencies
+Make sure the following tools are available on Parrot Security OS:
+- **Docker**
+- **kubectl**
+- **gcloud** (Google Cloud CLI)
+
+### 1.2 Clone the Repository
+Fork and clone the modified Bank of Anthos repository:
 
 ```bash
 git clone https://github.com/YOUR_USERNAME/sql-vulnerable-cloud-cybersecurity
 cd sql-vulnerable-cloud-cybersecurity/
-3. Set Up GCP Environment
-Create a GCP Project and get your PROJECT_ID.
-Enable required APIs (like Kubernetes API):
 ```
-```bash
+
+1.3 Configure GCP Environment
+Set up your Google Cloud project:
+
 Copy code
+```bash
 export PROJECT_ID=<YOUR_PROJECT_ID>
 export REGION=us-central1
+```
+# Enable necessary APIs
 gcloud services enable container.googleapis.com --project=${PROJECT_ID}
-4. Create a GKE Cluster
-```bash
+1.4 Create a GKE Cluster
+
 Copy code
+```bash
 gcloud container clusters create-auto sql-vulnerable-cloud \
   --project=${PROJECT_ID} --region=${REGION}
 ```
-5. Deploy to GKE Cluster
-Deploy the project to your Kubernetes cluster:
+📦 Step 2: Deploy the Application
+2.1 Deploy the App on GKE
+Deploy the application using Kubernetes manifests:
 
-```bash
 Copy code
+```bash
 kubectl apply -f ./extras/jwt/jwt-secret.yaml
 kubectl apply -f ./kubernetes-manifests
 ```
-6. Access the Application
-Get the external IP of the frontend service:
-```bash
+
+2.2 Access the App
+Get the external IP address of the frontend service:
+
 Copy code
-kubectl get service frontend | awk '{print $4}'
-Visit the external IP in a web browser to interact with the application.
+```bash
+kubectl get service frontend
 ```
-Testing and Exploiting Vulnerabilities
 
-Reconnaissance
-Use Nmap or Masscan to scan open ports and services.
-Use Nikto to identify potential web vulnerabilities on the frontend.
+Visit the external IP in your web browser to access the app.
 
-Static Analysis
-Analyze the source code from the repository to look for security flaws (e.g., hardcoded credentials, SQL injections).
-Use tools like SearchSploit to find relevant exploits for technologies in use (PostgreSQL, Python, etc.).
+🔍 Step 3: Vulnerability Scanning
+3.1 Install Masscan
+If Masscan is not already installed, install it:
 
-Dynamic Testing
-Launch OWASP ZAP or Burp Suite to perform dynamic testing on the web frontend.
-Identify weak points like SQL injection, XSS, or authentication bypass.
+Copy code
+```bash
+sudo apt update
+sudo apt install masscan
+```
+3.2 Perform Reconnaissance
+Scan the external IP for open ports:
 
-Exploiting Vulnerabilities
-For SQL injection vulnerabilities, use tools like SQLmap to attempt exploitation.
-For weaknesses in JWT authentication, try manipulating tokens to bypass authentication.
+Copy code
+```bash
+sudo masscan <EXTERNAL_IP> -p0-65535 --rate=1000
+```
+3.3 Static Analysis
+Search for Hardcoded Credentials:
 
-Ethical Considerations
-Work within your own environment: Since this is a public demo, make sure you're testing on your own GKE deployment.
-Disclaimer
-This project is for educational purposes only. Any misuse of this code in environments outside your control is not condoned by the project contributors.
+Copy code
+```bash
+grep -r "password" ./src/
+```
+Check for SQL Injection Points: Look for user input fields in Python or Java files that interact with the database.
+3.4 Dynamic Testing
+OWASP ZAP:
+
+Copy code
+```bash
+zap-cli start
+zap-cli spider http://<EXTERNAL_IP>
+```
+Burp Suite: Test for SQL injection using the intruder tool.
+🛠️ Step 4: Exploiting Vulnerabilities
+4.1 SQL Injection
+Use SQLmap to exploit SQL injection vulnerabilities:
+
+
+Copy code
+```bash
+sqlmap -u "http://<EXTERNAL_IP>/login" --data "username=admin&password=admin" --dbs
+```
+4.2 JWT Token Manipulation
+Decode JWT Tokens:
+
+Copy code
+```bash
+jwt_tool <TOKEN> -pc payload.txt
+```
+Attempt to Bypass Authentication: Modify the token payload to escalate privileges.
+🧹 Step 5: Clean Up
+When done, delete the GKE cluster:
+
+
+Copy code
+```bash
+gcloud container clusters delete sql-vulnerable-cloud \
+  --project=${PROJECT_ID} --region=${REGION}
+```
+⚖️ Ethical Considerations
+Always perform testing in a controlled environment and do not misuse these techniques. This project is for educational purposes only.
+
+📚 Additional Resources
+Parrot Security OS Documentation
+SQLmap User Manual
+Google Cloud Kubernetes Engine
+📜 License
+This project is licensed under the MIT License.
+
+🙌 Acknowledgements
+Original Bank of Anthos app by Google.
+Parrot Security OS for providing powerful security tools.
+💬 Contact
+For any questions or feedback, please open an issue on this repository.
+
+Make sure to replace `YOUR_USERNAME`, `<YOUR_PROJECT_ID>`, and `<EXTERNAL_IP>` with the appropriate values for your GitHub username, Google Cloud project ID, and the actual external IP address. This formatted README.md should be easy to copy and paste into your repository.
 
 ## Screenshots
 
@@ -118,7 +201,7 @@ The following button opens up an interactive tutorial showing how to deploy Bank
    export REGION=us-central1
    gcloud services enable container.googleapis.com \
      --project=${PROJECT_ID}
-   ```
+
 
    Substitute `<PROJECT_ID>` with the ID of your Google Cloud project.
 
@@ -176,31 +259,3 @@ The following button opens up an interactive tutorial showing how to deploy Bank
 
    Deleting the cluster may take a few minutes.
 
-## Additional deployment options
-
-- **Workload Identity**: [See these instructions.](/docs/workload-identity.md)
-- **Cloud SQL**: [See these instructions](/extras/cloudsql) to replace the in-cluster databases with hosted Google Cloud SQL.
-- **Multi Cluster with Cloud SQL**: [See these instructions](/extras/cloudsql-multicluster) to replicate the app across two regions using GKE, Multi Cluster Ingress, and Google Cloud SQL.
-- **Istio**: [See these instructions](/extras/istio) to configure an IngressGateway.
-- **Anthos Service Mesh**: ASM requires Workload Identity to be enabled in your GKE cluster. [See the workload identity instructions](/docs/workload-identity.md) to configure and deploy the app. Then, apply `extras/istio/` to your cluster to configure frontend ingress.
-- **Java Monolith (VM)**: We provide a version of this app where the three Java microservices are coupled together into one monolithic service, which you can deploy inside a VM (eg. Google Compute Engine). See the [ledgermonolith](/src/ledgermonolith) directory.
-
-## Documentation
-
-<!-- This section is duplicated in the docs/ README: https://github.com/GoogleCloudPlatform/bank-of-anthos/blob/main/docs/README.md -->
-
-- [Development](/docs/development.md) to learn how to run and develop this app locally.
-- [Environments](/docs/environments.md) to learn how to deploy on non-GKE clusters.
-- [Workload Identity](/docs/workload-identity.md) to learn how to set-up Workload Identity.
-- [CI/CD pipeline](/docs/ci-cd-pipeline.md) to learn details about and how to set-up the CI/CD pipeline.
-- [Troubleshooting](/docs/troubleshooting.md) to learn how to resolve common problems.
-
-## Demos featuring Bank of Anthos
-- [Tutorial: Explore Anthos (Google Cloud docs)](https://cloud.google.com/anthos/docs/tutorials/explore-anthos)
-- [Tutorial: Migrating a monolith VM to GKE](https://cloud.google.com/migrate/containers/docs/migrating-monolith-vm-overview-setup)
-- [Tutorial: Running distributed services on GKE private clusters using ASM](https://cloud.google.com/service-mesh/docs/distributed-services-private-clusters)
-- [Tutorial: Run full-stack workloads at scale on GKE](https://cloud.google.com/kubernetes-engine/docs/tutorials/full-stack-scale)
-- [Architecture: Anthos on bare metal](https://cloud.google.com/architecture/ara-anthos-on-bare-metal)
-- [Architecture: Creating and deploying secured applications](https://cloud.google.com/architecture/security-foundations/creating-deploying-secured-apps)
-- [Keynote @ Google Cloud Next '20: Building trust for speedy innovation](https://www.youtube.com/watch?v=7QR1z35h_yc)
-- [Workshop @ IstioCon '22: Manage and secure distributed services with ASM](https://www.youtube.com/watch?v=--mPdAxovfE)
