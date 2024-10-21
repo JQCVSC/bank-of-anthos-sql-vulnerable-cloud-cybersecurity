@@ -1,10 +1,10 @@
 # SQL Vulnerable Cloud Cybersecurity Lab
 
 ![GitHub repo size](https://img.shields.io/github/repo-size/JQCVSC/bank-of-anthos-sql-vulnerable-cloud-cybersecurity)
-![GitHub contributors](https://img.shields.io/github/contributors/JQCVS/bank-of-anthos-sql-vulnerable-cloud-cybersecurity)
-![GitHub stars](https://img.shields.io/github/stars/JQCVS/bank-of-anthos-sql-vulnerable-cloud-cybersecurity?style=social)
-![GitHub forks](https://img.shields.io/github/forks/JQCVS/bank-of-anthos-sql-vulnerable-cloud-cybersecurity?style=social)
-![GitHub issues](https://img.shields.io/github/issues/JQCVS/bank-of-anthos-sql-vulnerable-cloud-cybersecurity)
+![GitHub contributors](https://img.shields.io/github/contributors/JQCVSC/bank-of-anthos-sql-vulnerable-cloud-cybersecurity)
+![GitHub stars](https://img.shields.io/github/stars/JQCVSC/bank-of-anthos-sql-vulnerable-cloud-cybersecurity?style=social)
+![GitHub forks](https://img.shields.io/github/forks/JQCVSC/bank-of-anthos-sql-vulnerable-cloud-cybersecurity?style=social)
+![GitHub issues](https://img.shields.io/github/issues/JQCVSC/bank-of-anthos-sql-vulnerable-cloud-cybersecurity)
 
 ## 📖 Overview
 This lab is a modified version of the original Bank of Anthos web application, intentionally configured to include SQL vulnerabilities. It serves as an educational platform for ethical hacking, cloud security testing, and demonstrating SQL vulnerabilities in a cloud-native environment using **Google Cloud Platform (GCP)** and **Kubernetes**.
